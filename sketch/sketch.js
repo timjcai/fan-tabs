@@ -20,10 +20,18 @@ function getRandomInt(min, max) {
 
 function changeOpacity() {
   const pokemon = document.getElementById("pokemon");
-  let value = parseFloat(pokemon.style.opacity);
+  var value = parseFloat(pokemon.style.opacity);
   console.log(value);
-  value = value + 0.01;
-  pokemon.style.opacity = value;
+  if (value < 0.2) {
+    value = value + 0.01;
+    pokemon.style.opacity = value;
+  } else {
+    pokemon.style.opacity = 1;
+  }
 }
 
-setInterval(changeOpacity, 1000);
+var intervalID = setInterval(changeOpacity, 1000);
+
+setTimeout(function(){
+  clearInterval(intervalID);
+}, 20000) // stop it after 20seconds
