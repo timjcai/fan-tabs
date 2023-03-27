@@ -29,14 +29,11 @@
   height: auto;
   margin: 10px;
   color: black;
+  opacity: 1%;
 }
 
 .centered {
   margin: auto;
-}
-
-.blackout {
-  filter: opacity(2%);
 }
 
 .form {

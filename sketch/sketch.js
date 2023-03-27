@@ -1,5 +1,7 @@
 window.addEventListener("load", (event) => {
-  setup ()
+  setup ();
+  changeOpacity();
+  let counter = 1;
 });
 
 function setup() {
@@ -16,17 +18,12 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-function changeOpacty() {
-
+function changeOpacity() {
+  const pokemon = document.getElementById("pokemon");
+  let value = parseFloat(pokemon.style.opacity);
+  console.log(value);
+  value = value + 0.01;
+  pokemon.style.opacity = value;
 }
 
-function countDown () {
-  const start = new Date().getTime();
-  var now = new Date().getTime();
-  var distance = start - now;
-
-  var seconds = Math.floor ((distance % (1000*60))/1000);
-  console.log(seconds);
-}
-
-countDown()
+setInterval(changeOpacity, 1000);
