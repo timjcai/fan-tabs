@@ -7,6 +7,13 @@ Created a guessing game for the original 151 Pokémon.
 - how to build a chrome extension
 - how to build and refactor an end-to-end Vanilla Javascript project
 
+# How to Setup on Local Machine:
+> 1. clone/fork repo
+> 2. visit chrome://extensions/
+> 3. select 'Load unpacked' in the top left hand corner
+> 4. select the entire fan-tabs folder
+> 5. fan-tabs should now override your existing 'new tab'
+
 ### Project Description:
 'Who's that Pokémon!' is an exciting Chrome extension app designed exclusively for Pokémon fans who want to test their knowledge of Pokémon from the first generation. This app challenges players to guess the name of the Pokémon displayed on their screen within a limited time frame.
 With hundreds of Pokémon to choose from, players will have to rely on their memory and quick thinking skills to identify each Pokémon as fast as possible. The app features a simple and user-friendly interface that makes it easy for players to start playing right away.
