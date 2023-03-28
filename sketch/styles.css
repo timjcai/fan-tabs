@@ -34,6 +34,7 @@
 
 .centered {
   margin: auto;
+  text-align: center;
 }
 
 .form {
@@ -43,5 +44,34 @@
   border: 1px solid black;
   box-sizing: border-box;
   padding-left: 10px;
+  background-color: #ABC4AA;
+}
+
+.alert-container {
+  position: fixed;
+  top: 10vh;
+  left: 50vw;
+  transform: translateX(-50%);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.alert {
+  pointer-events: none;
+  background-color: #F08080;
+  padding: .75em;
+  border-radius: 0.25em;
+  opacity: 1;
+  transition: opacity 500ms ease-in-out;
+  margin-bottom: .5em;
+}
+
+.alert.hide {
+  opacity: 0;
+}
+
+.alert.correct {
   background-color: #ABC4AA;
 }
