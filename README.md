@@ -23,6 +23,6 @@ Created a guessing game for the original 151 Pokémon.
 > So, whether you're a long-time fan or just starting with Pokemon, 'Who's that Pokémon!' is the perfect app to test your knowledge and have fun with your friends. Download the app now and start guessing!
 
 
-### Project Disclaimer: 
+### Project Disclaimer:
 > 'Who's that Pokémon!' is a fan-made Chrome extension app that is not affiliated with, endorsed, sponsored, or specifically approved by Nintendo or the Pokemon Company. This app is purely for entertainment and fun purposes only. The inspiration for this app is drawn from the popular Nintendo franchise 'Pokemon', and all credit for the Pokemon characters and their respective images goes to the Pokemon Company.
 > We do not claim any ownership or copyright over the Pokemon characters or their images. This app is not intended to infringe upon any copyrights or trademarks of Nintendo or the Pokemon Company." ,
