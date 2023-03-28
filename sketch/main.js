@@ -170,19 +170,19 @@ function setup() {
   pokemonDiv.src = link;
   pokemonDiv.setAttribute('data-pokemonname', targetGuess)
 }
-
+// helpers
 function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-
+// game state
 function changeOpacity() {
   const pokemon = document.getElementById("pokemon");
   var value = parseFloat(pokemon.style.opacity);
   console.log(value);
-  if (value < 0.2) {
+  if (value < 0.10) {
     value = value + 0.01;
     pokemon.style.opacity = value;
   } else {
@@ -190,10 +190,32 @@ function changeOpacity() {
   }
 }
 
+function gameWon (message) {
+  const alert = document.createElement("div")
+  alert.textContent = message;
+  alert.classList.add("alert", "correct");
+  alertContainer.prepend(alert)
+}
+
+function gameLose(message) {
+  const alert = document.createElement("div")
+  alert.textContent = message;
+  alert.classList.add("alert");
+  alertContainer.prepend(alert)
+}
+
 var intervalID = setInterval(changeOpacity, 1000);
 setTimeout(function(){
   clearInterval(intervalID);
-}, 20000) // stop it after 20seconds
+  if (guessAttempt.value === targetGuess) {
+    guessAttempt.setAttribute("disabled", "");
+  } else {
+    gameLose('you failed to guess the pokemon');
+    guessAttempt.style.background = "grey";
+    guessAttempt.setAttribute("value","game over")
+    guessAttempt.setAttribute("disabled", "");
+  }
+}, 10000) // stop it after 20seconds
 
 function showAlert(message, duration = 1000) {
   const alert = document.createElement("div")
@@ -212,6 +234,7 @@ function showAlert(message, duration = 1000) {
   }, duration)
 }
 
+// handling interactivity with user
 function handleSubmission(event) {
     event.preventDefault();
     submitGuess(guessAttempt.value);
@@ -220,6 +243,8 @@ function handleSubmission(event) {
 function submitGuess(value) {
   if (value === targetGuess){
     showAlert('correct');
+    pokemon.style.opacity = 1;
+    gameWon ('you win!');
   } else {
     showAlert('incorrect guess');
   }

@@ -24,12 +24,15 @@
   flex: 1;
 }
 
+.disabled {
+  background-color: grey;
+}
+
 #pokemon {
   width: 100px;
   height: auto;
   margin: 10px;
   color: black;
-  opacity: 1%;
 }
 
 .centered {
@@ -43,7 +46,7 @@
   border-radius: 50px;
   border: 1px solid black;
   box-sizing: border-box;
-  padding-left: 10px;
+  text-align: center;
   background-color: #ABC4AA;
 }
 
