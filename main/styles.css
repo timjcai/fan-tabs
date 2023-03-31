@@ -26,13 +26,15 @@
 
 .image-container {
   height: 120px;
-  width: auto
+  width: auto;
+  display: flex;
+  align-items: center;
 }
 .disabled {
   background-color: grey;
 }
 
-#pokemon {
+#know {
   width: 100px;
   height: auto;
   margin: 10px;

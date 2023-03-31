@@ -159,12 +159,58 @@ const remainingPokemon = [];
 var guessAttempt = document.querySelector("#guess");
 var form = document.querySelector('form');
 
+// class Database {
+//   constructor(dataset) {
+//     this.dataset = dataset;
+//   }
+// }
+
+// class Game {
+//   constructor(database) {
+//     this.database = database;
+//   }
+
+//   createGameData() {
+//     function getRandomInt(min, max) {
+//       min = Math.ceil(min);
+//       max = Math.floor(max);
+//       return Math.floor(Math.random() * (max - min) + min);
+//     }
+//     const p = getRandomInt(1, 151);
+//     const name = this.database[p-1].toLowerCase();
+//     return [p, name];
+//   }
+
+//   setupGame() {
+//     const link = `/main/targetImages/${array[0]}.png`
+//     const pokemonDiv = document.getElementById("know");
+//     console.log(array[1]);
+//     pokemonDiv.src = link;
+//     pokemonDiv.setAttribute('data-correct', array[1]);
+//   }
+
+// }
+
+// const originalDatabase = new Database(genOnePokemon);
+// console.log(originalDatabase)
+// counter = 1
+// const round1 = new Game(genOnePokemon)
+// console.log(round1.database)
+// console.log(round1.createGameData())
 
 // Game Setup
 window.addEventListener("load", (event) => {
-  var pokemon = createGameData(genOnePokemon);
-  setupGame(pokemon);
-  changeOpacity();
+  let gameOver = false;
+  let counter = 1;
+  while (gameOver === false) {
+    // displayRound(counter);
+    // createNewGame(database);
+    // changeOpacity();
+    var newGame = createGameData(genOnePokemon);
+    setupGame(newGame);
+    changeOpacity();
+    gameOver = startInteraction();
+  }
 });
 
 function createGameData(array) {
@@ -179,11 +225,16 @@ function createGameData(array) {
 
 function setupGame(array) {
   // const r = getRandomBackground;
-  const link = `/main/pokemon/${array[0]}.png`
-  const pokemonDiv = document.getElementById("pokemon");
-  console.log(array[1]);
-  pokemonDiv.src = link;
-  pokemonDiv.setAttribute('data-correct', array[1])
+  const link = `/main/targetImages/${array[0]}.png`
+  const newTarget = document.createElement("img")
+  newTarget.id = "know"
+  newTarget.src = link;
+  newTarget.setAttribute('data-correct', array[1])
+  newTarget.style.opacity = 0.01;
+  imageContainer = document.querySelector(".image-container");
+  console.log(newTarget)
+  console.log(imageContainer);
+  imageContainer.appendChild(newTarget);
 }
 
 function collect(originalDatabase, gameData) {
@@ -198,15 +249,16 @@ function collect(originalDatabase, gameData) {
   }
 }
 
-var alteredDatabase = collect(genOnePokemon, pokemon);
-
-console.log(alteredDatabase)
-
+function resetGame() {
+  const imageContainer = document.querySelector(".image-container")
+  const target = document.querySelector("#know")
+  imageContainer.removeChild(target);
+}
 // helpers
 
 // game state
 function changeOpacity() {
-  const pokemon = document.getElementById("pokemon");
+  const pokemon = document.getElementById("know");
   var value = parseFloat(pokemon.style.opacity);
   console.log(value);
   if (value < 0.10) {
@@ -220,7 +272,9 @@ function changeOpacity() {
 var intervalID = setInterval(changeOpacity, 1000);
 setTimeout(function(){
   clearInterval(intervalID);
-  if (guessAttempt.value === document.querySelector('data-correct')) {
+  const correctImage = document.querySelector('[data-correct]');
+  const correctAnswer = correctImage.getAttribute("data-correct");
+  if (guessAttempt.value === correctAnswer) {
     guessAttempt.setAttribute("disabled", "");
   } else {
     showAlert('you failed to guess the pokemon');
@@ -251,19 +305,22 @@ function showAlert(message, duration = 1000) {
 
 // handling interactivity with user
 function submitGuess(value) {
-  if (value === document.querySelector('data-correct')){
+  const correctImage = document.querySelector('[data-correct]');
+  const correctAnswer = correctImage.getAttribute("data-correct");
+  if (value === correctAnswer){
     showAlert('correct');
-    pokemon.style.opacity = 1;
+    correctImage.style.opacity = 1;
     showAlert ('you win!');
-    createGameData(genOnePokemon);
+    return true;
   } else {
     showAlert('incorrect guess');
+    return false;
   }
 }
 
 function handleSubmission(event) {
-    event.preventDefault();
-    submitGuess(guessAttempt.value);
+  event.preventDefault();
+  return submitGuess(guessAttempt.value);
 }
 
 
