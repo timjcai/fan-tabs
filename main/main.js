@@ -201,7 +201,7 @@ class Game {
     return [p, name];
   }
 
-  setupGame() {
+  setupGame(array) {
     const link = `/main/targetImages/${array[0]}.png`
     const pokemonDiv = document.getElementById("know");
     console.log(array[1]);
@@ -223,20 +223,23 @@ class Game {
     imageContainer = document.querySelector(".image-container");
     console.log(newTarget)
     console.log(imageContainer);
-    imageContainer.appendChild(newTarget);
+    imageContainer.appendChild(newTargtet);
   }
 }
 // }
 const referralDatabase = new Database(genOnePokemon);
 let originalDatabase = new Database(genOnePokemon);
 const newGame = new Game(originalDatabase);
-const totalRounds = newGame.totalRound() + 1
+const totalRounds = newGame.totalRound()
 let currentRound = newGame.currentRound();
-while (currentRound < totalRounds) {
-  console.log(originalDatabase.dataset.length);
+while (currentRound < totalRounds + 1) {
+  console.log(`Round ${currentRound}` )
   let roundData = newGame.createGameData(originalDatabase.dataset.length)
-  console.log(newGame.match(capitalize(roundData[1]), referralDatabase.dataset));
+  const originalPosition = newGame.match(capitalize(roundData[1]), referralDatabase.dataset);
   console.log(roundData);
+  // fix roundData duplication bug
+  // use originalPosition Data for creating GuessItem
+  console.log(`${roundData[1]}'s original position is ${originalPosition}`);
   originalDatabase.remove(roundData[0])
   currentRound += 1
   // console.log(currentRound)
