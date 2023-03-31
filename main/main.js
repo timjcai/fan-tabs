@@ -159,181 +159,229 @@ const remainingPokemon = [];
 var guessAttempt = document.querySelector("#guess");
 var form = document.querySelector('form');
 
-// class Database {
-//   constructor(dataset) {
-//     this.dataset = dataset;
-//   }
-// }
+class Database {
+  constructor(dataset) {
+    this.dataset = dataset;
+  }
 
-// class Game {
-//   constructor(database) {
-//     this.database = database;
-//   }
-
-//   createGameData() {
-//     function getRandomInt(min, max) {
-//       min = Math.ceil(min);
-//       max = Math.floor(max);
-//       return Math.floor(Math.random() * (max - min) + min);
-//     }
-//     const p = getRandomInt(1, 151);
-//     const name = this.database[p-1].toLowerCase();
-//     return [p, name];
-//   }
-
-//   setupGame() {
-//     const link = `/main/targetImages/${array[0]}.png`
-//     const pokemonDiv = document.getElementById("know");
-//     console.log(array[1]);
-//     pokemonDiv.src = link;
-//     pokemonDiv.setAttribute('data-correct', array[1]);
-//   }
-
-// }
-
-// const originalDatabase = new Database(genOnePokemon);
-// console.log(originalDatabase)
-// counter = 1
-// const round1 = new Game(genOnePokemon)
-// console.log(round1.database)
-// console.log(round1.createGameData())
-
-// Game Setup
-window.addEventListener("load", (event) => {
-  let counter = 1;
-  const totalRounds = genOnePokemon.length
-  const roundWon = document.querySelector("#know")
-  // displayRound(counter);
-  // createNewGame(database);
-  // changeOpacity();
-    resetGame();
-    var newGame = createGameData(genOnePokemon);
-    setupGame(newGame);
-    changeOpacity();
-    startInteraction();
-    console.log(roundWon.getAttribute('[data-win]'))
-    if (roundWon.getAttribute('[data-win]')) {
-      counter += 1
-      console.log(counter)
+  remove(index) {
+    if (this.dataset.length === index) {
+      return this.dataset = this.dataset.slice(0, this.dataset.length-1)
+    } else if (index === 0) {
+      return this.dataset = this.dataset.slice(1, this.dataset.length)
     } else {
-      console.log('none')
+      const lowendMax = index;
+      const highendMin = index + 1;
+      return this.dataset = this.dataset.slice(0,lowendMax).concat(this.dataset.slice(highendMin, this.dataset.length));
     }
   }
-);
+}
 
-function createGameData(array) {
-  function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min);
+class Game {
+  constructor(database) {
+    this.database = database;
   }
-  var p = getRandomInt(1, 151);
-  return [p, array[p-1].toLowerCase()]
-}
 
-function setupGame(array) {
-  // const r = getRandomBackground;
-  const link = `/main/targetImages/${array[0]}.png`
-  const newTarget = document.createElement("img")
-  newTarget.id = "know"
-  newTarget.src = link;
-  newTarget.setAttribute('data-correctanswer', array[1])
-  newTarget.style.opacity = 0.01;
-  imageContainer = document.querySelector(".image-container");
-  console.log(newTarget)
-  console.log(imageContainer);
-  imageContainer.appendChild(newTarget);
-}
-
-function collect(originalDatabase, gameData) {
-  if (originalDatabase.length === gameData[0]){
-    return originalDatabase.slice(0,originalDatabase.length-1)
-  } else if (gameData[0] === 0){
-    return originalDatabase.slice(1,originalDatabase.length)
-  } else {
-    const lowendMax = gameData[0];
-    const highendMin = gameData[0] + 1;
-    return originalDatabase.slice(0,lowendMax).concat(originalDatabase.slice(highendMin,originalDatabase.length));
+  totalRound () {
+    return this.database.dataset.length
   }
-}
 
-function resetGame() {
-  const imageContainer = document.querySelector(".image-container")
-  const target = document.querySelector("#know")
-  imageContainer.removeChild(target);
-}
-// helpers
+  currentRound () {
+    return 1;
+  }
 
-// game state
-function changeOpacity() {
-  const pokemon = document.getElementById("know");
-  var value = parseFloat(pokemon.style.opacity);
-  console.log(value);
-  if (value < 0.10) {
-    value = value + 0.01;
-    pokemon.style.opacity = value;
-  } else {
-    pokemon.style.opacity = 1;
+  createGameData(max) {
+    function getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min) + min);
+    }
+    const p = getRandomInt(1, max);
+    const name = this.database.dataset[p-1].toLowerCase();
+    return [p, name];
+  }
+
+  setupGame() {
+    const link = `/main/targetImages/${array[0]}.png`
+    const pokemonDiv = document.getElementById("know");
+    console.log(array[1]);
+    pokemonDiv.src = link;
+    pokemonDiv.setAttribute('data-correct', array[1]);
+  }
+
+  match(correctAnswer, referringDatabase) {
+    return referringDatabase.indexOf(correctAnswer);
+  }
+
+  createGuessItem (index, correctAnswer){
+    const link = `/main/targetImages/${index}.png`
+    const newTarget = document.createElement("img")
+    newTarget.id = "know"
+    newTarget.src = link;
+    newTarget.setAttribute('data-correctanswer', correctAnswer)
+    newTarget.style.opacity = 1;
+    imageContainer = document.querySelector(".image-container");
+    console.log(newTarget)
+    console.log(imageContainer);
+    imageContainer.appendChild(newTarget);
   }
 }
-
-var intervalID = setInterval(changeOpacity, 1000);
-setTimeout(()=>{
-  clearInterval(intervalID);
-  const correctImage = document.querySelector('[data-correctanswer]');
-  const correctAnswer = correctImage.getAttribute("data-correctanswer");
-  if (guessAttempt.value === correctAnswer) {
-    guessAttempt.setAttribute("disabled", "");
-  } else {
-    showAlert('you failed to guess the pokemon');
-    guessAttempt.style.background = "grey";
-    guessAttempt.setAttribute("value","game over")
-    guessAttempt.setAttribute("disabled", "");
-  }
-}, 10000) // stop it after 20seconds
-
-function showAlert(message, duration = 1000) {
-  const alert = document.createElement("div")
-  alert.textContent = message;
-  if (message === 'correct') {
-    alert.classList.add("alert", "correct")
-  } else if (message === 'you win!') {
-    alert.classList.add("alert", "correct")
-  } else {
-    alert.classList.add("alert");
-  }
-  alertContainer.prepend(alert)
-  setTimeout(()=> {
-    alert.classList.add("hide")
-    alert.addEventListener("transitionend", () => {
-      alert.remove()
-    })
-  }, duration)
+// }
+const referralDatabase = new Database(genOnePokemon);
+let originalDatabase = new Database(genOnePokemon);
+const newGame = new Game(originalDatabase);
+const totalRounds = newGame.totalRound() + 1
+let currentRound = newGame.currentRound();
+while (currentRound < totalRounds) {
+  console.log(originalDatabase.dataset.length);
+  let roundData = newGame.createGameData(originalDatabase.dataset.length)
+  console.log(newGame.match(capitalize(roundData[1]), referralDatabase.dataset));
+  console.log(roundData);
+  originalDatabase.remove(roundData[0])
+  currentRound += 1
+  // console.log(currentRound)
 }
 
-// handling interactivity with user
-function submitGuess(value) {
-  const correctImage = document.querySelector('[data-correctanswer]');
-  const correctAnswer = correctImage.getAttribute("data-correctanswer");
-  if (value === correctAnswer){
-    showAlert('correct');
-    correctImage.style.opacity = 1;
-    showAlert ('you win!');
-    correctImage.setAttribute('data-win',true)
-  } else {
-    showAlert('incorrect guess');
-    correctImage.setAttribute('data-win',false)
-  }
+function capitalize (word) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
-function handleSubmission(event) {
-  event.preventDefault();
-  return submitGuess(guessAttempt.value);
-}
+// Game Setup
+// window.addEventListener("load", (event) => {
+//   let counter = 1;
+//   const totalRounds = genOnePokemon.length
+//   const roundWon = document.querySelector("#know")
+//   // displayRound(counter);
+//   // createNewGame(database);
+//   // changeOpacity();
+//     resetGame();
+//     var newGame = createGameData(genOnePokemon);
+//     setupGame(newGame);
+//     changeOpacity();
+//     startInteraction();
+//     console.log(roundWon.getAttribute('[data-win]'))
+//     if (roundWon.getAttribute('[data-win]')) {
+//       counter += 1
+//       console.log(counter)
+//     } else {
+//       console.log('none')
+//     }
+//   }
+// );
+
+// function createGameData(array) {
+//   function getRandomInt(min, max) {
+//     min = Math.ceil(min);
+//     max = Math.floor(max);
+//     return Math.floor(Math.random() * (max - min) + min);
+//   }
+//   var p = getRandomInt(1, 151);
+//   return [p, array[p-1].toLowerCase()]
+// }
+
+// function setupGame(array) {
+//   // const r = getRandomBackground;
+//   const link = `/main/targetImages/${array[0]}.png`
+//   const newTarget = document.createElement("img")
+//   newTarget.id = "know"
+//   newTarget.src = link;
+//   newTarget.setAttribute('data-correctanswer', array[1])
+//   newTarget.style.opacity = 0.01;
+//   imageContainer = document.querySelector(".image-container");
+//   console.log(newTarget)
+//   console.log(imageContainer);
+//   imageContainer.appendChild(newTarget);
+// }
+
+// // function collect(originalDatabase, gameData) {
+// //   if (originalDatabase.length === gameData[0]){
+// //     return originalDatabase.slice(0,originalDatabase.length-1)
+// //   } else if (gameData[0] === 0){
+// //     return originalDatabase.slice(1,originalDatabase.length)
+// //   } else {
+// //     const lowendMax = gameData[0];
+// //     const highendMin = gameData[0] + 1;
+// //     return originalDatabase.slice(0,lowendMax).concat(originalDatabase.slice(highendMin,originalDatabase.length));
+// //   }
+// // }
+
+// function resetGame() {
+//   const imageContainer = document.querySelector(".image-container")
+//   const target = document.querySelector("#know")
+//   imageContainer.removeChild(target);
+// }
+// // helpers
+
+// // game state
+// function changeOpacity() {
+//   const pokemon = document.getElementById("know");
+//   var value = parseFloat(pokemon.style.opacity);
+//   console.log(value);
+//   if (value < 0.10) {
+//     value = value + 0.01;
+//     pokemon.style.opacity = value;
+//   } else {
+//     pokemon.style.opacity = 1;
+//   }
+// }
+
+// var intervalID = setInterval(changeOpacity, 1000);
+// setTimeout(()=>{
+//   clearInterval(intervalID);
+//   const correctImage = document.querySelector('[data-correctanswer]');
+//   const correctAnswer = correctImage.getAttribute("data-correctanswer");
+//   if (guessAttempt.value === correctAnswer) {
+//     guessAttempt.setAttribute("disabled", "");
+//   } else {
+//     showAlert('you failed to guess the pokemon');
+//     guessAttempt.style.background = "grey";
+//     guessAttempt.setAttribute("value","game over")
+//     guessAttempt.setAttribute("disabled", "");
+//   }
+// }, 10000) // stop it after 20seconds
+
+// function showAlert(message, duration = 1000) {
+//   const alert = document.createElement("div")
+//   alert.textContent = message;
+//   if (message === 'correct') {
+//     alert.classList.add("alert", "correct")
+//   } else if (message === 'you win!') {
+//     alert.classList.add("alert", "correct")
+//   } else {
+//     alert.classList.add("alert");
+//   }
+//   alertContainer.prepend(alert)
+//   setTimeout(()=> {
+//     alert.classList.add("hide")
+//     alert.addEventListener("transitionend", () => {
+//       alert.remove()
+//     })
+//   }, duration)
+// }
+
+// // handling interactivity with user
+// function submitGuess(value) {
+//   const correctImage = document.querySelector('[data-correctanswer]');
+//   const correctAnswer = correctImage.getAttribute("data-correctanswer");
+//   if (value === correctAnswer){
+//     showAlert('correct');
+//     correctImage.style.opacity = 1;
+//     showAlert ('you win!');
+//     correctImage.setAttribute('data-win',true)
+//   } else {
+//     showAlert('incorrect guess');
+//     correctImage.setAttribute('data-win',false)
+//   }
+// }
+
+// function handleSubmission(event) {
+//   event.preventDefault();
+//   return submitGuess(guessAttempt.value);
+// }
 
 
-function startInteraction () {
-  form.addEventListener("submit", handleSubmission)
-}
+// function startInteraction () {
+//   form.addEventListener("submit", handleSubmission)
+// }
 
 // startInteraction();
