@@ -1,4 +1,4 @@
-const alertContainer = document.querySelector("[data-alert-container]")
+const alertContainer = document.querySelector("[data-alert-container]");
 const genOnePokemon = [
   "Bulbasaur",
   "Ivysaur",
@@ -151,31 +151,58 @@ const genOnePokemon = [
   "Dragonite",
   "Mewtwo",
   "Mew"
-]
-var p = getRandomInt(1, 151);
-var targetGuess = genOnePokemon[p-1].toLowerCase()
+];
+const remainingPokemon = [];
+
+// var p = getRandomInt(1, 151);
+// var targetGuess = genOnePokemon[p-1].toLowerCase();
 var guessAttempt = document.querySelector("#guess");
 var form = document.querySelector('form');
 
+
+// Game Setup
 window.addEventListener("load", (event) => {
-  setup ();
+  var pokemon = createGameData(genOnePokemon);
+  setupGame(pokemon);
   changeOpacity();
 });
 
-function setup() {
+function createGameData(array) {
+  function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min);
+  }
+  var p = getRandomInt(1, 151);
+  return [p, array[p-1].toLowerCase()]
+}
+
+function setupGame(array) {
   // const r = getRandomBackground;
-  const link = `/sketch/pokemon/${p}.png`
+  const link = `/main/pokemon/${array[0]}.png`
   const pokemonDiv = document.getElementById("pokemon");
-  console.log(targetGuess);
+  console.log(array[1]);
   pokemonDiv.src = link;
-  pokemonDiv.setAttribute('data-pokemonname', targetGuess)
+  pokemonDiv.setAttribute('data-correct', array[1])
 }
+
+function collect(originalDatabase, gameData) {
+  if (originalDatabase.length === gameData[0]){
+    return originalDatabase.slice(0,originalDatabase.length-1)
+  } else if (gameData[0] === 0){
+    return originalDatabase.slice(1,originalDatabase.length)
+  } else {
+    const lowendMax = gameData[0];
+    const highendMin = gameData[0] + 1;
+    return originalDatabase.slice(0,lowendMax).concat(originalDatabase.slice(highendMin,originalDatabase.length));
+  }
+}
+
+var alteredDatabase = collect(genOnePokemon, pokemon);
+
+console.log(alteredDatabase)
+
 // helpers
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min) + min);
-}
 
 // game state
 function changeOpacity() {
@@ -190,27 +217,13 @@ function changeOpacity() {
   }
 }
 
-function gameWon (message) {
-  const alert = document.createElement("div")
-  alert.textContent = message;
-  alert.classList.add("alert", "correct");
-  alertContainer.prepend(alert)
-}
-
-function gameLose(message) {
-  const alert = document.createElement("div")
-  alert.textContent = message;
-  alert.classList.add("alert");
-  alertContainer.prepend(alert)
-}
-
 var intervalID = setInterval(changeOpacity, 1000);
 setTimeout(function(){
   clearInterval(intervalID);
-  if (guessAttempt.value === targetGuess) {
+  if (guessAttempt.value === document.querySelector('data-correct')) {
     guessAttempt.setAttribute("disabled", "");
   } else {
-    gameLose('you failed to guess the pokemon');
+    showAlert('you failed to guess the pokemon');
     guessAttempt.style.background = "grey";
     guessAttempt.setAttribute("value","game over")
     guessAttempt.setAttribute("disabled", "");
@@ -221,6 +234,8 @@ function showAlert(message, duration = 1000) {
   const alert = document.createElement("div")
   alert.textContent = message;
   if (message === 'correct') {
+    alert.classList.add("alert", "correct")
+  } else if (message === 'you win!') {
     alert.classList.add("alert", "correct")
   } else {
     alert.classList.add("alert");
@@ -235,20 +250,22 @@ function showAlert(message, duration = 1000) {
 }
 
 // handling interactivity with user
+function submitGuess(value) {
+  if (value === document.querySelector('data-correct')){
+    showAlert('correct');
+    pokemon.style.opacity = 1;
+    showAlert ('you win!');
+    createGameData(genOnePokemon);
+  } else {
+    showAlert('incorrect guess');
+  }
+}
+
 function handleSubmission(event) {
     event.preventDefault();
     submitGuess(guessAttempt.value);
 }
 
-function submitGuess(value) {
-  if (value === targetGuess){
-    showAlert('correct');
-    pokemon.style.opacity = 1;
-    gameWon ('you win!');
-  } else {
-    showAlert('incorrect guess');
-  }
-}
 
 function startInteraction () {
   form.addEventListener("submit", handleSubmission)

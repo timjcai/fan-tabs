@@ -24,6 +24,10 @@
   flex: 1;
 }
 
+.image-container {
+  height: 120px;
+  width: auto
+}
 .disabled {
   background-color: grey;
 }
