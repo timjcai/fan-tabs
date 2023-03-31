@@ -200,18 +200,26 @@ var form = document.querySelector('form');
 
 // Game Setup
 window.addEventListener("load", (event) => {
-  let gameOver = false;
   let counter = 1;
-  while (gameOver === false) {
-    // displayRound(counter);
-    // createNewGame(database);
-    // changeOpacity();
+  const totalRounds = genOnePokemon.length
+  const roundWon = document.querySelector("#know")
+  // displayRound(counter);
+  // createNewGame(database);
+  // changeOpacity();
+    resetGame();
     var newGame = createGameData(genOnePokemon);
     setupGame(newGame);
     changeOpacity();
-    gameOver = startInteraction();
+    startInteraction();
+    console.log(roundWon.getAttribute('[data-win]'))
+    if (roundWon.getAttribute('[data-win]')) {
+      counter += 1
+      console.log(counter)
+    } else {
+      console.log('none')
+    }
   }
-});
+);
 
 function createGameData(array) {
   function getRandomInt(min, max) {
@@ -229,7 +237,7 @@ function setupGame(array) {
   const newTarget = document.createElement("img")
   newTarget.id = "know"
   newTarget.src = link;
-  newTarget.setAttribute('data-correct', array[1])
+  newTarget.setAttribute('data-correctanswer', array[1])
   newTarget.style.opacity = 0.01;
   imageContainer = document.querySelector(".image-container");
   console.log(newTarget)
@@ -270,10 +278,10 @@ function changeOpacity() {
 }
 
 var intervalID = setInterval(changeOpacity, 1000);
-setTimeout(function(){
+setTimeout(()=>{
   clearInterval(intervalID);
-  const correctImage = document.querySelector('[data-correct]');
-  const correctAnswer = correctImage.getAttribute("data-correct");
+  const correctImage = document.querySelector('[data-correctanswer]');
+  const correctAnswer = correctImage.getAttribute("data-correctanswer");
   if (guessAttempt.value === correctAnswer) {
     guessAttempt.setAttribute("disabled", "");
   } else {
@@ -305,16 +313,16 @@ function showAlert(message, duration = 1000) {
 
 // handling interactivity with user
 function submitGuess(value) {
-  const correctImage = document.querySelector('[data-correct]');
-  const correctAnswer = correctImage.getAttribute("data-correct");
+  const correctImage = document.querySelector('[data-correctanswer]');
+  const correctAnswer = correctImage.getAttribute("data-correctanswer");
   if (value === correctAnswer){
     showAlert('correct');
     correctImage.style.opacity = 1;
     showAlert ('you win!');
-    return true;
+    correctImage.setAttribute('data-win',true)
   } else {
     showAlert('incorrect guess');
-    return false;
+    correctImage.setAttribute('data-win',false)
   }
 }
 
@@ -328,4 +336,4 @@ function startInteraction () {
   form.addEventListener("submit", handleSubmission)
 }
 
-startInteraction();
+// startInteraction();
