@@ -1,3 +1,7 @@
+import {initTimer} from './javascript/timer.js';
+import {Database} from './javascript/database.js';
+import {Round} from './javascript/round.js';
+
 const alertContainer = document.querySelector("[data-alert-container]");
 const genOnePokemon = [
   "Bulbasaur",
@@ -152,90 +156,11 @@ const genOnePokemon = [
   "Mewtwo",
   "Mew"
 ];
-const remainingPokemon = [];
+const setTime = 10;
+const timeH = document.querySelector('.timer');
 
-// var p = getRandomInt(1, 151);
-// var targetGuess = genOnePokemon[p-1].toLowerCase();
-var guessAttempt = document.querySelector("#guess");
-var form = document.querySelector('form');
-
-class Database {
-  constructor(dataset) {
-    this.dataset = dataset;
-  }
-
-  remove(index) {
-    if (this.dataset.length === index) {
-      return this.dataset = this.dataset.slice(0, this.dataset.length-1);
-    } else if (index === 1) {
-      return this.dataset = this.dataset.slice(1, this.dataset.length);
-    } else if (index === 2){
-      const first = [this.dataset[0]];
-      const second = this.dataset.slice(2, this.dataset.length);
-      return this.dataset = first.concat(second);
-    } else {
-      const lowendMax = index - 1;
-      const highendMin = index;
-      return this.dataset = this.dataset.slice(0,lowendMax).concat(this.dataset.slice(highendMin, this.dataset.length));
-    }
-  }
-
-  totalRound () {
-    return this.dataset.length
-  }
-
-  currentRound () {
-    return 1;
-  }
-}
-
-class Round {
-  constructor(database) {
-    this.database = database;
-  }
-
-  createGameData(max) {
-    function getRandomInt(min, max) {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min) + min);
-    }
-    const p = getRandomInt(1, max);
-    const name = this.database.dataset[p-1].toLowerCase();
-    return [p, name];
-  }
-
-  setupGuess(array) {
-    const link = `/main/targetImages/${array[0]}.png`
-    const pokemonDiv = document.getElementById("know");
-    console.log(array[1]);
-    pokemonDiv.src = link;
-    pokemonDiv.setAttribute('data-correct', array[1]);
-  }
-
-  match(correctAnswer, referringDatabase) {
-    return referringDatabase.indexOf(correctAnswer);
-  }
-
-  createGuessItem (index, correctAnswer){
-    const link = `/main/targetImages/${index}.png`
-    const newTarget = document.createElement("img")
-    newTarget.id = "know"
-    newTarget.src = link;
-    newTarget.setAttribute('data-correctanswer', correctAnswer)
-    newTarget.style.opacity = 0.01;
-    const imageContainer = document.querySelector(".image-container");
-    console.log(newTarget)
-    console.log(imageContainer);
-    imageContainer.appendChild(newTarget);
-  }
-
-  deleteGuessItem(){
-    const imageContainer = document.querySelector(".image-container")
-    const target = document.querySelector("#know")
-    imageContainer.removeChild(target);
-  }
-}
+const guessAttempt = document.querySelector("#guess");
+const form = document.querySelector('form');
 
 Array.prototype.random = function () {
   return this[Math.floor((Math.random()*this.length))];
@@ -247,16 +172,31 @@ function initGame() {
   const newRound = new Round(originalDatabase);
   const totalRounds = referralDatabase.totalRound();
   let currentRound = referralDatabase.currentRound();
+  let roundTimer = setTime;
   while (currentRound < totalRounds + 1) {
+    initTimer(setTime);
     console.log(`Round ${currentRound}` )
     let roundData = newRound.createGameData(originalDatabase.dataset.length);
-    const originalPosition = newRound.match(capitalize(roundData[1]), referralDatabase.dataset);
-    console.log(roundData);
     newRound.setupGuess(roundData);
+    const originalPosition = newRound.match(capitalize(roundData[1]), referralDatabase.dataset);
     newRound.createGuessItem(roundData[0], roundData[1]);
+    const correctImage = document.querySelector('[data-correctanswer]');
+    const correctAnswer = correctImage.getAttribute("data-correctanswer");
+    let intervalID = setInterval(changeOpacity, 1000);
+    setTimeout(()=>{
+      clearInterval(intervalID);
+      const correctImage = document.querySelector('[data-correctanswer]');
+      const correctAnswer = correctImage.getAttribute("data-correctanswer");
+      if (guessAttempt.value === correctAnswer) {
+        guessAttempt.setAttribute("disabled", "");
+      } else {
+        showAlert('you failed to guess the pokemon');
+        guessAttempt.style.background = "grey";
+        guessAttempt.setAttribute("value","game over")
+        guessAttempt.setAttribute("disabled", "");
+      }
+    }, 10000) // stop it after 20seconds
     newRound.deleteGuessItem();
-    console.log(originalDatabase.dataset[roundData[0]-1])
-    console.log(`${roundData[1]}'s original position is ${originalPosition}`);
     originalDatabase.remove(roundData[0])
     currentRound += 1
     // console.log(currentRound)
@@ -264,6 +204,9 @@ function initGame() {
 }
 
 initGame();
+
+// var intervalID = setInterval(changeOpacity, 1000);
+
 
 function capitalize (word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
@@ -295,86 +238,70 @@ function capitalize (word) {
 
 
 
-function resetGame() {
-  const imageContainer = document.querySelector(".image-container")
-  const target = document.querySelector("#know")
-  imageContainer.removeChild(target);
-}
+
 // helpers
 
 // game state
-// function changeOpacity() {
-//   const pokemon = document.getElementById("know");
-//   var value = parseFloat(pokemon.style.opacity);
-//   console.log(value);
-//   if (value < 0.10) {
-//     value = value + 0.01;
-//     pokemon.style.opacity = value;
-//   } else {
-//     pokemon.style.opacity = 1;
-//   }
-// }
+function changeOpacity() {
+  const pokemon = document.getElementById("know");
+  var value = parseFloat(pokemon.style.opacity);
+  console.log(value);
+  if (value < 0.10) {
+    value = value + 0.01;
+    pokemon.style.opacity = value;
+  } else {
+    pokemon.style.opacity = 1;
+  }
+}
 
-// var intervalID = setInterval(changeOpacity, 1000);
-// setTimeout(()=>{
-//   clearInterval(intervalID);
-//   const correctImage = document.querySelector('[data-correctanswer]');
-//   const correctAnswer = correctImage.getAttribute("data-correctanswer");
-//   if (guessAttempt.value === correctAnswer) {
-//     guessAttempt.setAttribute("disabled", "");
-//   } else {
-//     showAlert('you failed to guess the pokemon');
-//     guessAttempt.style.background = "grey";
-//     guessAttempt.setAttribute("value","game over")
-//     guessAttempt.setAttribute("disabled", "");
-//   }
-// }, 10000) // stop it after 20seconds
 
-// function showAlert(message, duration = 1000) {
-//   const alert = document.createElement("div")
-//   alert.textContent = message;
-//   if (message === 'correct') {
-//     alert.classList.add("alert", "correct")
-//   } else if (message === 'you win!') {
-//     alert.classList.add("alert", "correct")
-//   } else {
-//     alert.classList.add("alert");
-//   }
-//   alertContainer.prepend(alert)
-//   setTimeout(()=> {
-//     alert.classList.add("hide")
-//     alert.addEventListener("transitionend", () => {
-//       alert.remove()
-//     })
-//   }, duration)
-// }
+
+function showAlert(message, duration = 1000) {
+  const alert = document.createElement("div")
+  alert.textContent = message;
+  if (message === 'correct') {
+    alert.classList.add("alert", "correct")
+  } else if (message === 'you win!') {
+    alert.classList.add("alert", "correct")
+  } else {
+    alert.classList.add("alert");
+  }
+  alertContainer.prepend(alert)
+  setTimeout(()=> {
+    alert.classList.add("hide")
+    alert.addEventListener("transitionend", () => {
+      alert.remove()
+    })
+  }, duration)
+}
 
 // handling interactivity with user
-// function submitGuess(value) {
-//   const correctImage = document.querySelector('[data-correctanswer]');
-//   const correctAnswer = correctImage.getAttribute("data-correctanswer");
-//   if (value === correctAnswer){
-//     showAlert('correct');
-//     correctImage.style.opacity = 1;
-//     showAlert ('you win!');
-//     correctImage.setAttribute('data-win',true)
-//   } else {
-//     showAlert('incorrect guess');
-//     correctImage.setAttribute('data-win',false)
-//   }
-// }
+function submitGuess(value) {
+  const correctImage = document.querySelector('[data-correctanswer]');
+  const correctAnswer = correctImage.getAttribute("data-correctanswer");
+  console.log(correctImage);
+  console.log(correctAnswer);
+  if (value === correctAnswer){
+    showAlert('correct');
+    correctImage.style.opacity = 1;
+    showAlert ('you win!');
+    correctImage.setAttribute('data-win',true)
+  } else {
+    showAlert('incorrect guess');
+    correctImage.setAttribute('data-win',false)
+  }
+}
 
-// function handleSubmission(event) {
-//   event.preventDefault();
-//   return submitGuess(guessAttempt.value);
-// }
+function handleSubmission(event) {
+  event.preventDefault();
+  return submitGuess(guessAttempt.value);
+}
 
+function startInteraction () {
+  form.addEventListener("submit", handleSubmission)
+}
 
-// function startInteraction () {
-//   form.addEventListener("submit", handleSubmission)
-// }
-
-// startInteraction();
+startInteraction();
 
 // Archive Functions (delete later after code completely refactored)
 
@@ -412,4 +339,10 @@ function resetGame() {
 //   console.log(newTarget)
 //   console.log(imageContainer);
 //   imageContainer.appendChild(newTarget);
+// }
+
+// function resetGame() {
+//   const imageContainer = document.querySelector(".image-container")
+//   const target = document.querySelector("#know")
+//   imageContainer.removeChild(target);
 // }
