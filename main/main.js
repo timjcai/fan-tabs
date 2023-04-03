@@ -166,28 +166,32 @@ class Database {
 
   remove(index) {
     if (this.dataset.length === index) {
-      return this.dataset = this.dataset.slice(0, this.dataset.length-1)
-    } else if (index === 0) {
-      return this.dataset = this.dataset.slice(1, this.dataset.length)
+      return this.dataset = this.dataset.slice(0, this.dataset.length-1);
+    } else if (index === 1) {
+      return this.dataset = this.dataset.slice(1, this.dataset.length);
+    } else if (index === 2){
+      const first = [this.dataset[0]];
+      const second = this.dataset.slice(2, this.dataset.length);
+      return this.dataset = first.concat(second);
     } else {
-      const lowendMax = index;
-      const highendMin = index + 1;
+      const lowendMax = index - 1;
+      const highendMin = index;
       return this.dataset = this.dataset.slice(0,lowendMax).concat(this.dataset.slice(highendMin, this.dataset.length));
     }
   }
-}
-
-class Game {
-  constructor(database) {
-    this.database = database;
-  }
 
   totalRound () {
-    return this.database.dataset.length
+    return this.dataset.length
   }
 
   currentRound () {
     return 1;
+  }
+}
+
+class Round {
+  constructor(database) {
+    this.database = database;
   }
 
   createGameData(max) {
@@ -226,20 +230,25 @@ class Game {
     imageContainer.appendChild(newTargtet);
   }
 }
-// }
+
+Array.prototype.random = function () {
+  return this[Math.floor((Math.random()*this.length))];
+}
+
+
 const referralDatabase = new Database(genOnePokemon);
 let originalDatabase = new Database(genOnePokemon);
-const newGame = new Game(originalDatabase);
-const totalRounds = newGame.totalRound()
-let currentRound = newGame.currentRound();
+const newRound = new Round(originalDatabase);
+const totalRounds = referralDatabase.totalRound();
+let currentRound = referralDatabase.currentRound();
 while (currentRound < totalRounds + 1) {
   console.log(`Round ${currentRound}` )
-  let roundData = newGame.createGameData(originalDatabase.dataset.length)
-  const originalPosition = newGame.match(capitalize(roundData[1]), referralDatabase.dataset);
+  let roundData = newRound.createGameData(originalDatabase.dataset.length)
+  const originalPosition = newRound.match(capitalize(roundData[1]), referralDatabase.dataset);
   console.log(roundData);
-  // fix roundData duplication bug
-  // use originalPosition Data for creating GuessItem
+  console.log(originalDatabase.dataset[roundData[0]-1])
   console.log(`${roundData[1]}'s original position is ${originalPosition}`);
+  console.log(originalDatabase.dataset)
   originalDatabase.remove(roundData[0])
   currentRound += 1
   // console.log(currentRound)
