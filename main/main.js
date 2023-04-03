@@ -205,7 +205,7 @@ class Round {
     return [p, name];
   }
 
-  setupGame(array) {
+  setupGuess(array) {
     const link = `/main/targetImages/${array[0]}.png`
     const pokemonDiv = document.getElementById("know");
     console.log(array[1]);
@@ -223,11 +223,17 @@ class Round {
     newTarget.id = "know"
     newTarget.src = link;
     newTarget.setAttribute('data-correctanswer', correctAnswer)
-    newTarget.style.opacity = 1;
-    imageContainer = document.querySelector(".image-container");
+    newTarget.style.opacity = 0.01;
+    const imageContainer = document.querySelector(".image-container");
     console.log(newTarget)
     console.log(imageContainer);
-    imageContainer.appendChild(newTargtet);
+    imageContainer.appendChild(newTarget);
+  }
+
+  deleteGuessItem(){
+    const imageContainer = document.querySelector(".image-container")
+    const target = document.querySelector("#know")
+    imageContainer.removeChild(target);
   }
 }
 
@@ -235,24 +241,29 @@ Array.prototype.random = function () {
   return this[Math.floor((Math.random()*this.length))];
 }
 
-
-const referralDatabase = new Database(genOnePokemon);
-let originalDatabase = new Database(genOnePokemon);
-const newRound = new Round(originalDatabase);
-const totalRounds = referralDatabase.totalRound();
-let currentRound = referralDatabase.currentRound();
-while (currentRound < totalRounds + 1) {
-  console.log(`Round ${currentRound}` )
-  let roundData = newRound.createGameData(originalDatabase.dataset.length)
-  const originalPosition = newRound.match(capitalize(roundData[1]), referralDatabase.dataset);
-  console.log(roundData);
-  console.log(originalDatabase.dataset[roundData[0]-1])
-  console.log(`${roundData[1]}'s original position is ${originalPosition}`);
-  console.log(originalDatabase.dataset)
-  originalDatabase.remove(roundData[0])
-  currentRound += 1
-  // console.log(currentRound)
+function initGame() {
+  const referralDatabase = new Database(genOnePokemon);
+  let originalDatabase = new Database(genOnePokemon);
+  const newRound = new Round(originalDatabase);
+  const totalRounds = referralDatabase.totalRound();
+  let currentRound = referralDatabase.currentRound();
+  while (currentRound < totalRounds + 1) {
+    console.log(`Round ${currentRound}` )
+    let roundData = newRound.createGameData(originalDatabase.dataset.length);
+    const originalPosition = newRound.match(capitalize(roundData[1]), referralDatabase.dataset);
+    console.log(roundData);
+    newRound.setupGuess(roundData);
+    newRound.createGuessItem(roundData[0], roundData[1]);
+    newRound.deleteGuessItem();
+    console.log(originalDatabase.dataset[roundData[0]-1])
+    console.log(`${roundData[1]}'s original position is ${originalPosition}`);
+    originalDatabase.remove(roundData[0])
+    currentRound += 1
+    // console.log(currentRound)
+  }
 }
+
+initGame();
 
 function capitalize (word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
@@ -281,50 +292,17 @@ function capitalize (word) {
 //   }
 // );
 
-// function createGameData(array) {
-//   function getRandomInt(min, max) {
-//     min = Math.ceil(min);
-//     max = Math.floor(max);
-//     return Math.floor(Math.random() * (max - min) + min);
-//   }
-//   var p = getRandomInt(1, 151);
-//   return [p, array[p-1].toLowerCase()]
-// }
 
-// function setupGame(array) {
-//   // const r = getRandomBackground;
-//   const link = `/main/targetImages/${array[0]}.png`
-//   const newTarget = document.createElement("img")
-//   newTarget.id = "know"
-//   newTarget.src = link;
-//   newTarget.setAttribute('data-correctanswer', array[1])
-//   newTarget.style.opacity = 0.01;
-//   imageContainer = document.querySelector(".image-container");
-//   console.log(newTarget)
-//   console.log(imageContainer);
-//   imageContainer.appendChild(newTarget);
-// }
 
-// // function collect(originalDatabase, gameData) {
-// //   if (originalDatabase.length === gameData[0]){
-// //     return originalDatabase.slice(0,originalDatabase.length-1)
-// //   } else if (gameData[0] === 0){
-// //     return originalDatabase.slice(1,originalDatabase.length)
-// //   } else {
-// //     const lowendMax = gameData[0];
-// //     const highendMin = gameData[0] + 1;
-// //     return originalDatabase.slice(0,lowendMax).concat(originalDatabase.slice(highendMin,originalDatabase.length));
-// //   }
-// // }
 
-// function resetGame() {
-//   const imageContainer = document.querySelector(".image-container")
-//   const target = document.querySelector("#know")
-//   imageContainer.removeChild(target);
-// }
-// // helpers
+function resetGame() {
+  const imageContainer = document.querySelector(".image-container")
+  const target = document.querySelector("#know")
+  imageContainer.removeChild(target);
+}
+// helpers
 
-// // game state
+// game state
 // function changeOpacity() {
 //   const pokemon = document.getElementById("know");
 //   var value = parseFloat(pokemon.style.opacity);
@@ -371,7 +349,7 @@ function capitalize (word) {
 //   }, duration)
 // }
 
-// // handling interactivity with user
+// handling interactivity with user
 // function submitGuess(value) {
 //   const correctImage = document.querySelector('[data-correctanswer]');
 //   const correctAnswer = correctImage.getAttribute("data-correctanswer");
@@ -397,3 +375,41 @@ function capitalize (word) {
 // }
 
 // startInteraction();
+
+// Archive Functions (delete later after code completely refactored)
+
+// function collect(originalDatabase, gameData) {
+//   if (originalDatabase.length === gameData[0]){
+//     return originalDatabase.slice(0,originalDatabase.length-1)
+//   } else if (gameData[0] === 0){
+//     return originalDatabase.slice(1,originalDatabase.length)
+//   } else {
+//     const lowendMax = gameData[0];
+//     const highendMin = gameData[0] + 1;
+//     return originalDatabase.slice(0,lowendMax).concat(originalDatabase.slice(highendMin,originalDatabase.length));
+//   }
+// }
+
+// function createGameData(array) {
+//   function getRandomInt(min, max) {
+//     min = Math.ceil(min);
+//     max = Math.floor(max);
+//     return Math.floor(Math.random() * (max - min) + min);
+//   }
+//   var p = getRandomInt(1, 151);
+//   return [p, array[p-1].toLowerCase()]
+// }
+
+// function setupGame(array) {
+//   // const r = getRandomBackground;
+//   const link = `/main/targetImages/${array[0]}.png`
+//   const newTarget = document.createElement("img")
+//   newTarget.id = "know"
+//   newTarget.src = link;
+//   newTarget.setAttribute('data-correctanswer', array[1])
+//   newTarget.style.opacity = 0.01;
+//   imageContainer = document.querySelector(".image-container");
+//   console.log(newTarget)
+//   console.log(imageContainer);
+//   imageContainer.appendChild(newTarget);
+// }
