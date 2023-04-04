@@ -1,7 +1,6 @@
 export function initTimer(time) {
   const timeH = document.querySelector('.timer');
-  let timeSecond = time;
-  const timeout = 'Game Over'
+  let timeSecond = 10-time;
 
   displayTime(timeSecond);
 
@@ -15,12 +14,12 @@ export function initTimer(time) {
     return `${number<10 ? '0' :''}${number}`
   }
 
-  const countDown = setInterval(()=>{
-    timeSecond --;
-    displayTime(timeSecond);
-    if (timeSecond <= 0 || timeSecond < 1){
-      clearInterval(countDown);
-      timeH.innerHTML = timeout;
-    }
-  },1000)
+  // const countDown = setInterval(()=>{
+  //   timeSecond --;
+  //   displayTime(timeSecond);
+  //   if (timeSecond <= 0 || timeSecond < 1){
+  //     clearInterval(countDown);
+
+  //   }
+  // },1000)
 }

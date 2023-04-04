@@ -7,6 +7,10 @@
   font-family: 'Press Start 2P', cursive;
 }
 
+h1 {
+  margin-bottom: 25px;
+}
+
 #background {
   display: flex;
   width: 100%;
@@ -44,7 +48,6 @@
 }
 
 .centered {
-  margin: auto;
   text-align: center;
 }
 
