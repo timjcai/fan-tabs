@@ -1,4 +1,4 @@
-@import "timer.css";
+@import "gamedisplay.css";
 
 * {
   margin: 0;
@@ -47,9 +47,9 @@ h1 {
   color: black;
 }
 
-.centered {
+/* .centered {
   text-align: center;
-}
+} */
 
 .form {
   margin: 20px;

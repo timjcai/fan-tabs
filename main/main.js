@@ -158,10 +158,13 @@ const genOnePokemon = [
 ];
 const timeH = document.querySelector('.timer');
 let count = 1;
+let highestScore;
+const startButton = document.querySelector('.game-btn')
+const h1Tags = document.querySelectorAll('h1')
+const roundContainer = document.querySelector(".round")
 
 const guessAttempt = document.querySelector("#guess");
 const form = document.querySelector('form');
-
 function initGame() {
   const referralDatabase = new Database(genOnePokemon);
   let originalDatabase = new Database(genOnePokemon);
@@ -175,42 +178,43 @@ function initGame() {
     originalDatabase.remove(roundData[0])
     currentRound += 1
   }
-  console.log(allRounds);
   return [referralDatabase, allRounds]
 }
 const wholeGame = initGame();
-console.log(wholeGame[0].dataset);
-
 
 window.addEventListener("load", (event) => {
-    let roundNumber = 1;
-    initTimer(count);
-    console.log('start round')
-    const newRound = new Round(wholeGame[0])
-    let ogP = originalPosition(wholeGame, roundNumber);
-    newRound.createGuessItem(ogP+1, wholeGame[1][`round${roundNumber}`][1])
-    let intervalID = setInterval(()=>{
-      const roundContainer = document.querySelector(".round")
-      const timerContainer = document.querySelector(".timer")
-      if (count === 10) {
-        timeH.innerHTML = 'Game Over'
-        clearInterval(intervalID);
-      } else if (count > 10) {
-        count = 0
-        roundNumber ++
-        roundContainer.innerHTML = displayRound(roundNumber);
-        initTimer(count);
-        let ogP = originalPosition(wholeGame, roundNumber);
-        newRound.createGuessItem(ogP+1,wholeGame[1][`round${roundNumber}`][1])
-      } else {
-        roundContainer.innerHTML = displayRound(roundNumber);
-        console.log(`${count} count`)
-        changeOpacity();
-        count++
-        initTimer(count);
-      }
-    }, 1000)
 });
+
+startButton.addEventListener("click", (event) => {
+  startButton.classList.add('hidden');
+  timeH.classList.remove('hidden');
+  guessAttempt.classList.remove('hidden');
+  roundContainer.innerHTML = displayRound('1');
+  let roundNumber = 1;
+  initTimer(count);
+  const newRound = new Round(wholeGame[0])
+  let ogP = originalPosition(wholeGame, roundNumber);
+  newRound.createGuessItem(ogP+1, wholeGame[1][`round${roundNumber}`][1])
+  let intervalID = setInterval(()=>{
+    const roundContainer = document.querySelector(".round")
+    if (count === 10) {
+      timeH.innerHTML = 'Game Over'
+      clearInterval(intervalID);
+    } else if (count > 10) {
+      count = 0
+      roundNumber ++
+      roundContainer.innerHTML = displayRound(roundNumber);
+      initTimer(count);
+      let ogP = originalPosition(wholeGame, roundNumber);
+      newRound.createGuessItem(ogP+1,wholeGame[1][`round${roundNumber}`][1])
+    } else {
+      roundContainer.innerHTML = displayRound(roundNumber);
+      changeOpacity();
+      count++
+      initTimer(count);
+    }
+  }, 1000)
+})
 
 // helpers
 function originalPosition(database, round) {
@@ -242,7 +246,6 @@ function capitalize (word) {
 function changeOpacity() {
   const pokemon = document.getElementById("know");
   var value = parseFloat(pokemon.style.opacity);
-  console.log(value);
   if (value < 0.20) {
     value = value + 0.02;
     pokemon.style.opacity = value;
