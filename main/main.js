@@ -158,10 +158,12 @@ const genOnePokemon = [
 ];
 const timeH = document.querySelector('.timer');
 let count = 1;
-let highestScore;
+let currentScore;
 const startButton = document.querySelector('.game-btn')
 const h1Tags = document.querySelectorAll('h1')
 const roundContainer = document.querySelector(".round")
+const scoreContainer = document.querySelector(".highest-score")
+const previousScore = parseInt(scoreContainer.innerHTML)
 
 const guessAttempt = document.querySelector("#guess");
 const form = document.querySelector('form');
@@ -183,6 +185,7 @@ function initGame() {
 const wholeGame = initGame();
 
 window.addEventListener("load", (event) => {
+  initHideScore(previousScore);
 });
 
 startButton.addEventListener("click", (event) => {
@@ -199,10 +202,13 @@ startButton.addEventListener("click", (event) => {
     const roundContainer = document.querySelector(".round")
     if (count === 10) {
       timeH.innerHTML = 'Game Over'
+      scoreContainer.innerHTML = scoreHandler(previousScore,currentScore)
+      scoreContainer.classList.remove('hidden')
       clearInterval(intervalID);
     } else if (count > 10) {
       count = 0
       roundNumber ++
+      currentScore = roundNumber
       roundContainer.innerHTML = displayRound(roundNumber);
       initTimer(count);
       let ogP = originalPosition(wholeGame, roundNumber);
@@ -217,6 +223,12 @@ startButton.addEventListener("click", (event) => {
 })
 
 // helpers
+
+function initHideScore (element) {
+  if (element === 0) {
+    scoreContainer.classList.add('hidden')
+  }
+}
 function originalPosition(database, round) {
   return match(capitalize(database[1][`round${round}`][1]), database[0].dataset)
 }
@@ -241,6 +253,13 @@ function capitalize (word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
+function scoreHandler (previousScore, currentScore) {
+  if (currentScore > previousScore) {
+    return currentScore
+  } else {
+    return previousScore
+  }
+}
 
 // game state
 function changeOpacity() {
