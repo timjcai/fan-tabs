@@ -162,6 +162,7 @@ const roundContainer = document.querySelector(".round")
 const guessAttempt = document.querySelector("#guess");
 const form = document.querySelector('form');
 const timeH = document.querySelector('.timer');
+const scoreContainer = document.querySelector(".highest-score")
 let count = 1;
 
 function initGame() {
@@ -181,7 +182,7 @@ function initGame() {
 }
 
 window.addEventListener("load", (event) => {
-  initHideScore(previousScore);
+  scoreContainer.classList.add('hidden');
 });
 
 startButton.addEventListener("click", (event) => {
