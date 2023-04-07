@@ -16,7 +16,7 @@ h1 {
   width: 100%;
   height: 100vh;
   background-color: #F3DEBA;
-  position: absolute;
+  position: relative;
   margin: 0px;
   overflow: hidden;
 }

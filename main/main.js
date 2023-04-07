@@ -156,24 +156,23 @@ const genOnePokemon = [
   "Mewtwo",
   "Mew"
 ];
-const timeH = document.querySelector('.timer');
-let count = 1;
-let currentScore;
+
 const startButton = document.querySelector('.game-btn')
-const h1Tags = document.querySelectorAll('h1')
 const roundContainer = document.querySelector(".round")
 const scoreContainer = document.querySelector(".highest-score")
 const previousScore = parseInt(scoreContainer.innerHTML)
-
 const guessAttempt = document.querySelector("#guess");
 const form = document.querySelector('form');
+const timeH = document.querySelector('.timer');
+let count = 1;
+
 function initGame() {
-  const referralDatabase = new Database(genOnePokemon);
+  let referralDatabase = new Database(genOnePokemon);
   let originalDatabase = new Database(genOnePokemon);
-  const newRound = new Round(originalDatabase);
-  const totalRounds = referralDatabase.totalRound();
+  let newRound = new Round(originalDatabase);
+  let totalRounds = referralDatabase.totalRound();
   let currentRound = referralDatabase.currentRound();
-  const allRounds = {};
+  let allRounds = {};
   while (currentRound < totalRounds + 1) {
     let roundData = newRound.createGameData(originalDatabase.dataset.length);
     allRounds[`round${currentRound}`] = roundData
@@ -182,20 +181,23 @@ function initGame() {
   }
   return [referralDatabase, allRounds]
 }
-const wholeGame = initGame();
 
 window.addEventListener("load", (event) => {
   initHideScore(previousScore);
 });
 
 startButton.addEventListener("click", (event) => {
+  console.log('a');
+  let currentScore;
+  let wholeGame = initGame();
   startButton.classList.add('hidden');
   timeH.classList.remove('hidden');
   guessAttempt.classList.remove('hidden');
   roundContainer.innerHTML = displayRound('1');
   let roundNumber = 1;
+  console.log(roundNumber);
   initTimer(count);
-  const newRound = new Round(wholeGame[0])
+  let newRound = new Round(wholeGame[0])
   let ogP = originalPosition(wholeGame, roundNumber);
   newRound.createGuessItem(ogP+1, wholeGame[1][`round${roundNumber}`][1])
   let intervalID = setInterval(()=>{
@@ -203,8 +205,13 @@ startButton.addEventListener("click", (event) => {
     if (count === 10) {
       timeH.innerHTML = 'Game Over'
       scoreContainer.innerHTML = scoreHandler(previousScore,currentScore)
-      scoreContainer.classList.remove('hidden')
+      scoreContainer.classList.remove('hidden');
+      startButton.classList.remove('hidden');
+      startButton.innerHTML = 'Play Again?';
       clearInterval(intervalID);
+      guessAttempt.disabled = true;
+      guessAttempt.style.backgroundColor = 'grey';
+      return count = 1
     } else if (count > 10) {
       count = 0
       roundNumber ++
@@ -304,7 +311,7 @@ function submitGuess(value) {
     showAlert ('you win!');
     correctImage.setAttribute('data-win',true)
     guessAttempt.value = null;
-    count = 12
+    return count = 12
   } else {
     showAlert('incorrect guess');
     correctImage.setAttribute('data-win',false)
