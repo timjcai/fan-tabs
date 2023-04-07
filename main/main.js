@@ -159,8 +159,6 @@ const genOnePokemon = [
 
 const startButton = document.querySelector('.game-btn')
 const roundContainer = document.querySelector(".round")
-const scoreContainer = document.querySelector(".highest-score")
-const previousScore = parseInt(scoreContainer.innerHTML)
 const guessAttempt = document.querySelector("#guess");
 const form = document.querySelector('form');
 const timeH = document.querySelector('.timer');
@@ -190,10 +188,14 @@ startButton.addEventListener("click", (event) => {
   console.log('a');
   let currentScore;
   let wholeGame = initGame();
+  const scoreContainer = document.querySelector(".highest-score")
+  const previousScore = parseInt(scoreContainer.innerHTML)
   startButton.classList.add('hidden');
   timeH.classList.remove('hidden');
   guessAttempt.classList.remove('hidden');
   roundContainer.innerHTML = displayRound('1');
+  guessAttempt.disabled = false;
+  guessAttempt.style.backgroundColor = '#ABC4AA';
   let roundNumber = 1;
   console.log(roundNumber);
   initTimer(count);
@@ -204,18 +206,18 @@ startButton.addEventListener("click", (event) => {
     const roundContainer = document.querySelector(".round")
     if (count === 10) {
       timeH.innerHTML = 'Game Over'
-      scoreContainer.innerHTML = scoreHandler(previousScore,currentScore)
+      scoreContainer.innerHTML = scoreHandler(previousScore, currentScore);
       scoreContainer.classList.remove('hidden');
       startButton.classList.remove('hidden');
       startButton.innerHTML = 'Play Again?';
       clearInterval(intervalID);
       guessAttempt.disabled = true;
       guessAttempt.style.backgroundColor = 'grey';
-      return count = 1
+      return [count = 1, highestScore]
     } else if (count > 10) {
       count = 0
       roundNumber ++
-      currentScore = roundNumber
+      currentScore = roundNumber - 1
       roundContainer.innerHTML = displayRound(roundNumber);
       initTimer(count);
       let ogP = originalPosition(wholeGame, roundNumber);
